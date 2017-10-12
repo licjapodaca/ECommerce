@@ -9,7 +9,7 @@ using Microsoft.ServiceFabric.Services.Runtime;
 
 namespace ECommerce.API
 {
-    [EventSource(Name = "MyCompany-ECommerce-ECommerce.API")]
+    [EventSource(Name = "MyCompany-ECommerce-API")]
     internal sealed class ServiceEventSource : EventSource
     {
         public static readonly ServiceEventSource Current = new ServiceEventSource();

@@ -35,8 +35,7 @@ namespace ECommerce.API
                     {
                         ServiceEventSource.Current.ServiceMessage(serviceContext, $"Starting WebListener on {url}");
 
-                        return new WebHostBuilder()
-                                    .UseWebListener()
+                        return new WebHostBuilder().UseWebListener()
                                     .ConfigureServices(
                                         services => services
                                             .AddSingleton<StatelessServiceContext>(serviceContext))

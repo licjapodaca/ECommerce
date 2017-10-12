@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,58 +10,59 @@ using Microsoft.ServiceFabric.Services.Remoting.Client;
 
 namespace ECommerce.API.Controllers
 {
-	[Route("api/[controller]")]
-	public class CheckoutController : Controller
-	{
-		private static readonly Random rnd = new Random(DateTime.UtcNow.Second);
+   [Route("api/[controller]")]
+   public class CheckoutController : Controller
+   {
+      private static readonly Random rnd = new Random(DateTime.UtcNow.Second);
 
-		[Route("{userId}")]
-		public async Task<ApiCheckoutSummary> Checkout(string userId)
-		{
-			CheckoutSummary summary = await GetCheckoutService().Checkout(userId);
+      [Route("{userId}")]
+      public async Task<ApiCheckoutSummary> Checkout(string userId)
+      {
+         CheckoutSummary summary = await GetCheckoutService().Checkout(userId);
 
-			return ToApiCheckoutSummary(summary);
-		}
+         return ToApiCheckoutSummary(summary);
+      }
 
-		[Route("history/{userId}")]
-		public async Task<IEnumerable<ApiCheckoutSummary>> GetHistory(string userId)
-		{
-			IEnumerable<CheckoutSummary> history = await GetCheckoutService().GetOrderHistory(userId);
+      [Route("history/{userId}")]
+      public async Task<IEnumerable<ApiCheckoutSummary>> GetHistory(string userId)
+      {
+         IEnumerable<CheckoutSummary> history = await GetCheckoutService().GetOrderHitory(userId);
 
-			return history.Select(ToApiCheckoutSummary);
-		}
+         return history.Select(ToApiCheckoutSummary);
+      }
 
-		private ApiCheckoutSummary ToApiCheckoutSummary(CheckoutSummary model)
-		{
-			return new ApiCheckoutSummary
-			{
-				Products = model.Products.Select(p => new ApiCheckoutProduct
-				{
-					ProductId = p.Product.Id,
-					ProductName = p.Product.Name,
-					Price = p.Price,
-					Quantity = p.Quantity
-				}).ToList(),
-				Date = model.Date,
-				TotalPrice = model.TotalPrice
-			};
-		}
 
-		private ICheckoutService GetCheckoutService()
-		{
-			long key = LongRandom();
+      private ApiCheckoutSummary ToApiCheckoutSummary(CheckoutSummary model)
+      {
+         return new ApiCheckoutSummary
+         {
+            Products = model.Products.Select(p => new ApiCheckoutProduct
+            {
+               ProductId = p.Product.Id,
+               ProductName = p.Product.Name,
+               Price = p.Price,
+               Quantity = p.Quantity
+            }).ToList(),
+            Date = model.Date,
+            TotalPrice = model.TotalPrice
+         };
+      }
 
-			return ServiceProxy.Create<ICheckoutService>(
-				   new Uri("fabric:/ECommerce/CheckoutService"),
-				   new ServicePartitionKey(key));
-		}
+      private ICheckoutService GetCheckoutService()
+      {
+         long key = LongRandom();
 
-		private long LongRandom()
-		{
-			byte[] buf = new byte[8];
-			rnd.NextBytes(buf);
-			long longRand = BitConverter.ToInt64(buf, 0);
-			return longRand;
-		}
-	}
+         return ServiceProxy.Create<ICheckoutService>(
+                new Uri("fabric:/ECommerce/CheckoutService"),
+                new ServicePartitionKey(key));
+      }
+
+      private long LongRandom()
+      {
+         byte[] buf = new byte[8];
+         rnd.NextBytes(buf);
+         long longRand = BitConverter.ToInt64(buf, 0);
+         return longRand;
+      }
+   }
 }
